@@ -17,6 +17,14 @@ $gutters: (
   xlarge: 16px,
 );
 
+$containers: (
+  fluid: 100%,
+  extended: 1650px,
+  wide: 1440px,
+  medium: 1216px,
+  narrow: 900px,
+);
+
 .container {
   max-width: 100%;
   padding-right: 1rem;
@@ -25,29 +33,14 @@ $gutters: (
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
-
-  &-fluid {
-    width: 100%;
-  }
-
-  &-extended {
-    width: 1640px;
-  }
-
-  &-wide {
-    width: 1440px;
-  }
-
-  &-medium {
-    width: 1216px;
-  }
-
-  &-narrow {
-    width: 900px;
+  @each $container, $size in $containers {
+    &-#{$container} {
+      width: $size;
+    }
   }
 }
 
-div.row {
+.row {
   box-sizing: border-box;
   display: flex;
   flex-grow: 0;
@@ -83,6 +76,9 @@ div.row {
   .#{$media}-flex {
     display: flex;
   }
+  .#{$media}-hidden {
+    display: none;
+  }
 
   $directions: (row, row-reverse, column, column-reverse);
 
@@ -104,8 +100,8 @@ div.row {
   }
 
   @each $align in $aligns {
-    .#{$media}-align-self-#{$distribution} {
-      align-self: $value;
+    .#{$media}-align-self-#{$align} {
+      align-self: $align;
     }
   }
 }
@@ -128,7 +124,7 @@ div.row {
   .row-#{$media}-axis-x {
     margin: 0 - (map-get($gutters, 'medium'));
 
-    & > div {
+    & > .col {
       padding: 0 map-get($gutters, 'medium');
     }
   }
@@ -136,7 +132,7 @@ div.row {
   .row-#{$media}-axis-y {
     margin: -(map-get($gutters, 'medium')) 0;
 
-    & > div {
+    & > .col {
       padding: map-get($gutters, 'medium') 0;
     }
   }
@@ -144,7 +140,7 @@ div.row {
   .row-#{$media}-axis-xy {
     margin: -(map-get($gutters, 'medium'));
 
-    & > div {
+    & > .col {
       padding: map-get($gutters, 'medium');
     }
   }
@@ -154,7 +150,7 @@ div.row {
   @each $name, $size in $gutters {
     .row-#{$media}-gutter-#{$name} {
       margin: -($size);
-      & > col {
+      & > .col {
         padding: $size;
       }
     }
@@ -164,7 +160,7 @@ div.row {
     .row-#{$media}-axis-x.#{$media}-gutter-#{$name} {
       margin: 0 - ($size);
 
-      & > col {
+      & > .col {
         padding: 0 ($size);
       }
     }
@@ -174,7 +170,7 @@ div.row {
     .#{$media}-axis-y.#{$media}-gutter-#{$name} {
       margin: -($size) 0;
 
-      & > div {
+      & > .col {
         padding: ($size) 0;
       }
     }
@@ -184,7 +180,7 @@ div.row {
     .#{$media}-axis-xy.#{$media}-gutter-#{$name} {
       margin: -($size);
 
-      & > div {
+      & > .col {
         padding: ($size);
       }
     }
@@ -195,8 +191,7 @@ div.row {
 @mixin basis($media) {
   @include justify-content($media);
   @include flex-direction($media);
-  @include align-items($media);
-  @include align-self($media);
+  @include align($media);
   @include orders($media);
   @include gutter($media);
 }

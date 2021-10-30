@@ -1,12 +1,11 @@
 import React, { HTMLAttributes } from 'react'
 import classnames, { ClassName } from 'utils/classnames'
+import { ContainerWidth } from '../shared/types'
 export interface ContainerPropsFluid {
   className?: ClassName
 }
 
-type ContainerWidth = 'fluid' | 'extended' | 'wide' | 'medium' | 'narrow'
-
-export interface ContainerProps
+interface ContainerProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'className'> {
   className?: ClassName
   width?: ContainerWidth
