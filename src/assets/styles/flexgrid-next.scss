@@ -1,0 +1,224 @@
+@use 'sass:math';
+
+$breakpoints: (
+  xs: 0,
+  sm: 768px,
+  md: 1024px,
+  lg: 1200px,
+  xl: 1440px,
+  xxl: 1920px,
+);
+
+$gutters: (
+  none: 0,
+  small: 4px,
+  medium: 8px,
+  large: 12px,
+  xlarge: 16px,
+);
+
+.container {
+  max-width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+
+  &-fluid {
+    width: 100%;
+  }
+
+  &-extended {
+    width: 1640px;
+  }
+
+  &-wide {
+    width: 1440px;
+  }
+
+  &-medium {
+    width: 1216px;
+  }
+
+  &-narrow {
+    width: 900px;
+  }
+}
+
+div.row {
+  box-sizing: border-box;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  flex-wrap: wrap;
+  margin: -(map-get($gutters, 'medium'));
+  & > div.col {
+    flex-grow: 1;
+    flex-shrink: 0;
+    padding: map-get($gutters, 'medium');
+    box-sizing: border-box;
+  }
+}
+
+@mixin justify-content($media) {
+  $aligns: (
+    flex-start,
+    center,
+    flex-end,
+    space-around,
+    space-between,
+    space-evenly
+  );
+  @each $align in $aligns {
+    .#{$media}-justify-content-#{$align} {
+      justify-content: $align;
+    }
+  }
+}
+
+@mixin flex-direction($media) {
+  .#{$media}-flex {
+    display: flex;
+  }
+
+  $directions: (row, row-reverse, column, column-reverse);
+
+  @each $direction in $directions {
+    .#{$media}-flex-direction-#{$direction} {
+      display: flex;
+      flex-direction: $direction;
+    }
+  }
+}
+
+@mixin align($media) {
+  $aligns: (flex-start, center, flex-end, baseline stretch);
+
+  @each $align in $aligns {
+    .#{$media}-align-items-#{$align} {
+      align-items: $align;
+    }
+  }
+
+  @each $align in $aligns {
+    .#{$media}-align-self-#{$distribution} {
+      align-self: $value;
+    }
+  }
+}
+
+@mixin orders($media) {
+  @for $order from 1 through 24 {
+    .#{$media}-order-#{$order} {
+      order: $order;
+    }
+  }
+  .#{$media}-order-first {
+    order: -1;
+  }
+  .#{$media}-order-last {
+    order: 1;
+  }
+}
+
+@mixin default-medium-gutter($media) {
+  .row-#{$media}-axis-x {
+    margin: 0 - (map-get($gutters, 'medium'));
+
+    & > div {
+      padding: 0 map-get($gutters, 'medium');
+    }
+  }
+
+  .row-#{$media}-axis-y {
+    margin: -(map-get($gutters, 'medium')) 0;
+
+    & > div {
+      padding: map-get($gutters, 'medium') 0;
+    }
+  }
+
+  .row-#{$media}-axis-xy {
+    margin: -(map-get($gutters, 'medium'));
+
+    & > div {
+      padding: map-get($gutters, 'medium');
+    }
+  }
+}
+
+@mixin gutter($media) {
+  @each $name, $size in $gutters {
+    .row-#{$media}-gutter-#{$name} {
+      margin: -($size);
+      & > col {
+        padding: $size;
+      }
+    }
+  }
+
+  @each $name, $size in $gutters {
+    .row-#{$media}-axis-x.#{$media}-gutter-#{$name} {
+      margin: 0 - ($size);
+
+      & > col {
+        padding: 0 ($size);
+      }
+    }
+  }
+
+  @each $name, $size in $gutters {
+    .#{$media}-axis-y.#{$media}-gutter-#{$name} {
+      margin: -($size) 0;
+
+      & > div {
+        padding: ($size) 0;
+      }
+    }
+  }
+
+  @each $name, $size in $gutters {
+    .#{$media}-axis-xy.#{$media}-gutter-#{$name} {
+      margin: -($size);
+
+      & > div {
+        padding: ($size);
+      }
+    }
+  }
+  @include default-medium-gutter($media);
+}
+
+@mixin basis($media) {
+  @include justify-content($media);
+  @include flex-direction($media);
+  @include align-items($media);
+  @include align-self($media);
+  @include orders($media);
+  @include gutter($media);
+}
+
+@mixin column($media) {
+  @for $index from 1 through 12 {
+    $width: math.div(100%, math.div(12, $index));
+
+    .col-#{$media}-#{$index} {
+      flex-basis: $width;
+      max-width: $width;
+    }
+
+    .col-#{$media}-offset-#{$index} {
+      margin-left: $width;
+    }
+  }
+}
+
+@each $breakpoint, $size in $breakpoints {
+  @media only screen and (min-width: $size) {
+    @include basis($breakpoint);
+    @include column($breakpoint);
+  }
+}
